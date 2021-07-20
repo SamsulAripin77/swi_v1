@@ -1,0 +1,1 @@
+<script src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
