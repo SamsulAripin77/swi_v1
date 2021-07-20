@@ -60,7 +60,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('pembelians/media', 'PembelianController@storeMedia')->name('pembelians.storeMedia');
     Route::post('pembelians/ckmedia', 'PembelianController@storeCKEditorImages')->name('pembelians.storeCKEditorImages');
     Route::get('laporan-pembelians','PembelianController@laporan')->name('pembelians.laporan');
+    Route::get('export-pembelian','PembelianController@exportExcel')->name('pembelians.export-pembelian');
     Route::resource('pembelians', 'PembelianController');
+
+
+    
 
     // Buyer
     Route::delete('buyers/destroy', 'BuyerController@massDestroy')->name('buyers.massDestroy');
@@ -91,13 +95,27 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('sumber-sampahs', 'SumberSampahController');
 
     // Baseline Target
-    Route::delete('baseline-targets/destroy', 'BaselineTargetController@massDestroy')->name('baseline-targets.massDestroy');
+    Route::delete( 'baseline-targets/destroy', 'BaselineTargetController@massDestroy')->name('baseline-targets.massDestroy');
     Route::get('baseline/laporan', 'BaselineTargetController@laporan')->name('baseline-targets.laporan');
     Route::post('baseline-targets/dependend-dropdown', 'BaselineTargetController@dependendDropdown')->name('baseline.dependend-dropdown');
     Route::resource('baseline-targets', 'BaselineTargetController');
 
     Route::get('imports/pembelian-import','ImportsController@createPembelian')->name('imports.pembelian-create');
     Route::post('imports/pembelian-import','ImportsController@storePembelian')->name('imports.pembelian-store');
+
+    // Sub Jenis Plastik
+    Route::delete('sub-jenis-plastiks/destroy', 'SubJenisPlastikController@massDestroy')->name('sub-jenis-plastiks.massDestroy');
+    Route::resource('sub-jenis-plastiks', 'SubJenisPlastikController');
+
+    // Jenis Plastik Buyer
+    Route::delete('jenis-plastik-buyers/destroy', 'JenisPlastikBuyerController@massDestroy')->name('jenis-plastik-buyers.massDestroy');
+    Route::post('jenis-plastik/storeAjax','JenisPlastikBuyerController@storeAjax')->name('jenis_plastik.storeAjax');
+    Route::resource('jenis-plastik-buyers', 'JenisPlastikBuyerController');
+
+    // Jenis Usaha Buyer
+    Route::delete('jenis-usaha-buyers/destroy', 'JenisUsahaBuyerController@massDestroy')->name('jenis-usaha-buyers.massDestroy');
+    Route::post('jenis-usaha/storeAjax','jenisUsahaBuyerController@storeAjax')->name('jenis_usaha.storeAjax');
+    Route::resource('jenis-usaha-buyers', 'JenisUsahaBuyerController');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password
