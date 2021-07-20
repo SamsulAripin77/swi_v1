@@ -43,5 +43,6 @@ class Kernel extends HttpKernel
         'throttle'         => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'user-mitra'       => \App\Http\Middleware\IsUserMitra::class,
+        'user-monitor'     => \Illuminate\Http\Middleware\isUserMonitor::class
     ];
 }

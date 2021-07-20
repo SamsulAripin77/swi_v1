@@ -116,7 +116,7 @@
                 @endcan
                 @can('referensi_access')
                 <li
-                    class="nav-item has-treeview {{ request()->is("admin/jenis-plastiks*") ? "menu-open" : "" }} {{ request()->is("admin/kategori-plastiks*") ? "menu-open" : "" }} {{ request()->is("admin/jenis-usahas*") ? "menu-open" : "" }} {{ request()->is("admin/sumber-sampahs*") ? "menu-open" : "" }}">
+                    class="nav-item has-treeview {{ request()->is("admin/jenis-plastiks*") ? "menu-open" : "" }} {{ request()->is("admin/kategori-plastiks*") ? "menu-open" : "" }} {{ request()->is("admin/sub-jenis-plastiks*") ? "menu-open" : "" }} {{ request()->is("admin/jenis-usahas*") ? "menu-open" : "" }} {{ request()->is("admin/sumber-sampahs*") ? "menu-open" : "" }} {{ request()->is("admin/jenis-plastik-buyers*") ? "menu-open" : "" }} {{ request()->is("admin/jenis-usaha-buyers*") ? "menu-open" : "" }}">
                     <a class="nav-link nav-dropdown-toggle" href="#">
                         <i class="fa-fw nav-icon fas fa-bars">
 
@@ -153,6 +153,18 @@
                             </a>
                         </li>
                         @endcan
+                        @can('sub_jenis_plastik_access')
+                                <li class="nav-item">
+                                    <a href="{{ route("admin.sub-jenis-plastiks.index") }}" class="nav-link {{ request()->is("admin/sub-jenis-plastiks") || request()->is("admin/sub-jenis-plastiks/*") ? "active" : "" }}">
+                                        <i class="fa-fw nav-icon fas fa-edit">
+
+                                        </i>
+                                        <p>
+                                            {{ trans('cruds.subJenisPlastik.title') }}
+                                        </p>
+                                    </a>
+                                </li>
+                        @endcan
                         @can('jenis_usaha_access')
                         <li class="nav-item">
                             <a href="{{ route("admin.jenis-usahas.index") }}"
@@ -179,6 +191,30 @@
                             </a>
                         </li>
                         @endcan
+                        @can('jenis_plastik_buyer_access')
+                                <li class="nav-item">
+                                    <a href="{{ route("admin.jenis-plastik-buyers.index") }}" class="nav-link {{ request()->is("admin/jenis-plastik-buyers") || request()->is("admin/jenis-plastik-buyers/*") ? "active" : "" }}">
+                                        <i class="fa-fw nav-icon fas fa-hourglass-end">
+
+                                        </i>
+                                        <p>
+                                            {{ trans('cruds.jenisPlastikBuyer.title') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('jenis_usaha_buyer_access')
+                                <li class="nav-item">
+                                    <a href="{{ route("admin.jenis-usaha-buyers.index") }}" class="nav-link {{ request()->is("admin/jenis-usaha-buyers") || request()->is("admin/jenis-usaha-buyers/*") ? "active" : "" }}">
+                                        <i class="fa-fw nav-icon fab fa-buysellads">
+
+                                        </i>
+                                        <p>
+                                            {{ trans('cruds.jenisUsahaBuyer.title') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endcan
                     </ul>
                 </li>
                 @endcan
@@ -287,6 +323,19 @@
                             </a>
                         </li>
                         @endcan
+                        @cannot('user-monitor')
+                        <li class="nav-item">
+                            <a href="{{ route("admin.pembelians.export-pembelian") }}"
+                            class="nav-link {{ request()->is("admin/export-pembelian") || request()->is("admin/export-pembelian/*") ? "active" : "" }}">
+                            <i class="fa-fw nav-icon fas fa-book">
+                                    
+                                </i>
+                                <p>
+                                    Export data pembelian-Trial
+                                </p>
+                            </a>
+                        </li>
+                        @endcannot
                     </ul>
                 </li>
                 @endcan
@@ -315,6 +364,8 @@
                                 </p>
                             </a>
                         </li>
+                        @endcan
+                        @if (Auth::user()->can('user-monitor') || Auth::user()->can('admin-only'))
                         <li class="nav-item">
                             <a href="{{ route("admin.baseline-targets.laporan") }}"
                                 class="nav-link {{ request()->is("admin/baseline/laporan") || request()->is("admin/baseline/laporan/*") ? "active" : "" }}">
@@ -326,7 +377,7 @@
                                 </p>
                             </a>
                         </li>
-                        @endcan
+                        @endif
                         <li class="nav-item">
                             <a href="{{ route("admin.pembelians.laporan") }}"
                                 class="nav-link {{ request()->is("admin/laporan-pembelians") || request()->is("admin/laporan-pembelians/*") ? "active" : "" }}">

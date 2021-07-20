@@ -18,6 +18,7 @@
         </div>
     </div>
     @endcan
+
 </div>
 </div>
 </div>
@@ -66,6 +67,7 @@
         '#e74c3c',
     ]
   
+   
    
     function grafik_user(data) {
         let grafik_user = { labels: [], pengumpulan: [], baseline: [], target: [] }
@@ -154,14 +156,15 @@
                 <span class=" info-box-icon bg-${color} elevation-1"><i class="fas ${icon}"></i></span>
                 <div class="info-box-content">
                     <small class="info-box-text">${label}</small>
-                    <span class="info-box-number">${val}</span>
+                    <span class="info-box-number">${val.toLocaleString('id')}</span>
                 </div>
             </div>
         </div>`
         parent.append(child)
     }
 </script>
-@can('admin-only')
+
+@if(Auth::user()->can('user-monitor') || Auth::user()->can('admin-only'))
 <script>
     // jika admin
     adminCard(user_count, 'Jumlah User', 'fa-users', 'danger');
@@ -178,7 +181,6 @@
         let userData = []
         for (let i = 0; i < user.length; i++){
             let val = Object.entries(user[i])
-            console.log(val[1][1].baseline)
             grafikContainer.append(`  
             <div class="col-lg-6 col-md-12 chartWrapper">   
                <div class="card" id="">
@@ -208,21 +210,23 @@
                     borderWidth:{ top:5, right:0, bottom:0, left:0 },
                 },
                 {
-                    type: 'bubble',
+                    type: 'bar',
                     label: 'Baseline',
                     lineTension: 0, 
                     data: baseline, //.map(function (n) { return n / 1000 }),
                     borderColor:  'lime',
-                    borderWidth: 1
+                    backgroundColor: "rgba(0,0,0,0)", 
+                    borderWidth:{ top:5, right:0, bottom:0, left:0 },
                     //backgroundColor: Color2,
                 },
                 {
-                    type: 'bubble',
+                    type: 'bar',
                     lineTension: 0, 
                     label: 'Target',
                     data: target, //.map(function (n) { return n / 1000 }),
                     borderColor:  'blue',
-                    borderWidth: 1
+                    backgroundColor: "rgba(0,0,0,0)", 
+                    borderWidth:{ top:5, right:0, bottom:0, left:0 },
                 }],
                 labels: label
             },
@@ -266,7 +270,10 @@
 							let meta = chartInstance.controller.getDatasetMeta(i);
 							meta.data.forEach(function (bar, index) {
 								let data = dataset.data[index];
-								ctx.fillText(data, bar._model.x, bar._model.y - 5);
+								ctx.fillText(data.toLocaleString('id', {
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 2
+                                                }), bar._model.x, bar._model.y - 5);
 							});
 						});
 					}
@@ -350,8 +357,9 @@
         );
     }
     
+ 
 </script>
-@endcan
+@endif
 
 @can('mitra-only')
 <script>
@@ -424,7 +432,7 @@
 @endcan
 
 
-@cannot('admin-only')
+@if(!(Auth::user()->can('user-monitor') || Auth::user()->can('admin-only')))
 <script>
     function grafikPerPlastik () {
         let grafikContainer = $('#grafikContainer')
@@ -599,15 +607,15 @@ let myChart = new Chart(ctx, {
                 datasets: [{
                     type: 'bar',
                     label: `Pengumpulan (Kg) = ${pengumpulan.toLocaleString('id', {
-                                                minimumFractionDigits: 2,
+                                                minimumFractionDigits: 0,
                                                 maximumFractionDigits: 2
                                                 })}`,
                     backgroundColor: ['rgb(0,0,255,0.1)'],
                     data: pengumpulan, //.map(function (n) { return n / 1000 }),
                 }, {
                     type: 'bubble',
-                    label: `Baseline (Kg) = ${baseline.toLocaleString('id', {
-                                                minimumFractionDigits: 2,
+                    label: `Baseline (Kg) = ${Number(baseline).toLocaleString('id', {
+                                                minimumFractionDigits: 0,
                                                 maximumFractionDigits: 2
                                                 })}`,
                     data: baseline, //.map(function (n) { return n / 1000 }),
@@ -617,7 +625,7 @@ let myChart = new Chart(ctx, {
                 {
                     type: 'bubble',
                     label: `Target (Kg) = ${target.toLocaleString('id', {
-                                                minimumFractionDigits: 2,
+                                                minimumFractionDigits: 0,
                                                 maximumFractionDigits: 2
                                                 })}`,
                     data: target, //.map(function (n) { return n / 1000 }),
@@ -647,5 +655,5 @@ let myChart = new Chart(ctx, {
 });
 };
 </script>
-@endcannot
+@endif
 @endsection

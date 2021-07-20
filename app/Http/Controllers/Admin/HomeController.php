@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\{User,Buyer, Supplier, Kemitraan};
 use Gate;
 use Illuminate\Support\Facades\{DB, Auth};
+use Illuminate\Database\Eloquent\Builder;
 
 class HomeController
 {
@@ -27,6 +28,7 @@ class HomeController
         ];
 
         $authorize = Gate::inspect('admin-only');
+        $authUserMonitor = Gate::inspect('user-monitor');
 
         $dasboard = [
             'total_tonase_beli' => $this->beratKategori('pembelians', 'jenis_plastik_pembelian', '.pembelian_id'),
@@ -39,10 +41,12 @@ class HomeController
             'grafik_mitra' => $this->grafikMitra()
 
         ];
-        if ($authorize->allowed()) {
+        if ($authorize->allowed() || $authUserMonitor->allowed()) {
             $dasboard = [
 
-                'user_count' => User::count(),
+                'user_count' =>  User::with(['roles'])->whereHas('roles', function (Builder $query) {
+                    $query->where('title', '=', 'User');
+                })->count(),
                 'buyer_count' => Buyer::count(),
                 'supplier_count' => Supplier::count(),
                 'users_beli' => $this->beratCollection('pembelians'),
@@ -52,13 +56,6 @@ class HomeController
             ];
         }
 
-        
-
-            // $berat = $query->groupBy(['username'])->map(function ($item) {
-            //     $data = $item->groupBy('nama_plastik');
-            //     return $data;
-            // });
-            // return $this->grafikAdmin();
         return view('home', compact('dasboard'));
     }
 
@@ -95,7 +92,7 @@ class HomeController
         ->selectRaw('
                     nama_plastik,
                     users.name as name,
-                    baseline_target_jenis_plastik.baseline as baseline,
+                    baseline_target_jenis_plastik.baseline,
                     baseline_target_jenis_plastik.baseline + baseline_target_jenis_plastik.target  as target,
                     baseline_target_jenis_plastik.insentif as insentif_kg,
                     SUM(jenis_plastik_pembelian.berat) as pengumpulan,
@@ -143,13 +140,12 @@ class HomeController
             ->selectRaw('
                         nama_plastik,
                         users.name as name,
-                        baseline_target_jenis_plastik.baseline as baseline,
+                        CONVERT(baseline_target_jenis_plastik.baseline,int) as baseline,
                         baseline_target_jenis_plastik.baseline + baseline_target_jenis_plastik.target  as target,
                         baseline_target_jenis_plastik.insentif as insentif_kg,
                         SUM(jenis_plastik_pembelian.berat) as pengumpulan,
                         SUM(jenis_plastik_pembelian.berat) - baseline as incremental,
                         (SUM(jenis_plastik_pembelian.berat) - baseline) * baseline_target_jenis_plastik.insentif as insentif,
-
                         users.id as user_id,
                         pembelians.created_by_id as pembelian_user,
                         baseline_targets.nama_user_id as baseline_user
